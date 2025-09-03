@@ -1,78 +1,137 @@
-# Phase 3 Project: CLI
+# Library Management System CLI
 
-## Learning Goals
+A command-line interface application for managing a library's authors and books, built with Python and SQLite.
 
-- Configure environments with project-specific parameters using Pipenv.
-- Import and use external libraries.
-- Use SQLAlchemy ORM and Alembic to create a database schema and update it as you
-  continue to build your CLI.
-- Use SQLAlchemy ORM to join multiple tables to each other using one-to-one,
-  one-to-many, many-to-many relationships.
-- Use `list`s, `dict`s, and `tuple`s in appropriate contexts.
-- Exercise best practices in CLI design.
+## Features
 
-***
+- **Author Management**: Create, view, update, and delete authors
+- **Book Management**: Create, view, update, and delete books
+- **Relationship Tracking**: View all books by a specific author
+- **Input Validation**: Comprehensive error handling and data validation
+- **Interactive Menus**: User-friendly navigation system
 
-## Key Vocab
+## Installation
 
-- **Command Line**: a text-based interface that is built into your computer's
-operating system. It allows you to access the files and applications on your
-computer manually or through scripts.
-- **Terminal**: the application in Mac OS that allows you to access the command
-line.
-- **Command Shell/Powershell**: the applications in Windows that allow you to access
-the command line.
-- **Command-Line Interface (CLI)**: a text-based interface used to run programs,
-manage files and interact with objects in memory. As the name suggests, it is
-run from the command line.
+1. Clone the repository:
+```bash
+git clone https://github.com/levimutai/python-p3-final-project.git
+cd python-p3-final-project
+```
 
-***
+2. Install dependencies:
+```bash
+pipenv install
+pipenv shell
+```
 
-## Instructions
+3. Run the application:
+```bash
+python lib/cli.py
+```
 
-Welcome to the end of Phase 3! You've learned about a lot in this unit:
+## Usage
 
-- Python fundamentals.
-- Data structures (and more recently, algorithms).
-- Object-oriented programming.
-- Object inheritance.
-- Class attributes and methods.
-- Configuring applications.
-- SQL fundamentals.
-- Table relations in SQL.
-- Object-relational mapping with Python.
-- Object-relational mapping with SQLAlchemy.
-- Building CLIs.
+The CLI provides an interactive menu system:
 
-In this project, we're going to use these skills to create a CLI. We want you to
-display knowledge of as much from Phase 3 as you can- you won't be able to fit
-everything in, but we'll expect to see:
+### Main Menu
+- **Author Management**: Access all author-related operations
+- **Book Management**: Access all book-related operations
+- **Exit**: Close the application
 
-- A CLI application that solves a real-world problem and adheres to best
-  practices.
-- A database created and modified with SQLAlchemy ORM with 3+ related tables.
-- A well-maintained virtual environment using Pipenv.
-- Proper package structure in your application.
-- Use of `list`s, `dict`s, and `tuple`s.
+### Author Operations
+- List all authors
+- Find author by ID
+- Create new author
+- Delete author
+- View author's books
 
-***
+### Book Operations
+- List all books
+- Find book by ID
+- Create new book
+- Delete book
 
-## Tips and Tricks?
+## Project Structure
 
-- Think about your database schema before you begin- migrations are a pain!
-- Keep your Python objects, SQLAlchemy objects, and CLI script in separate
-  modules.
-- If you get stuck trying to accomplish a specific task, check online to see if
-  there's a Python library that will make it easier.
-- Consider using [Click][click] or [Fire][fire] to take care of basic CLI tasks
-  for you.
+```
+.
+├── Pipfile
+├── README.md
+└── lib/
+    ├── models/
+    │   ├── __init__.py     # Database connection
+    │   ├── author.py       # Author model with ORM methods
+    │   └── book.py         # Book model with ORM methods
+    ├── cli.py              # Main CLI interface
+    ├── helpers.py          # Helper functions for CLI operations
+    └── debug.py            # Debug script for testing
+```
 
-***
+## Models
 
-## Resources
+### Author
+- **Attributes**: name (string), birth_year (integer)
+- **Relationships**: One-to-many with Books
+- **Validations**: Name must be non-empty string, birth year must be > 1000
 
-- [Click documentation][click]
-- [The Python Fire Guide][fire]
+### Book
+- **Attributes**: title (string), genre (string), author_id (foreign key)
+- **Relationships**: Many-to-one with Author
+- **Validations**: Title and genre must be non-empty strings, author_id must reference existing author
 
-[click]: https://click.palletsprojects.com/en/8.1.x/
-[fire]: https://google.github.io/python-fire/guide/
+## Database Schema
+
+```sql
+CREATE TABLE authors (
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    birth_year INTEGER
+);
+
+CREATE TABLE books (
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    genre TEXT,
+    author_id INTEGER,
+    FOREIGN KEY (author_id) REFERENCES authors(id)
+);
+```
+
+## Key Files
+
+### `lib/cli.py`
+The main entry point of the application. Contains the interactive menu system and navigation logic. Initializes database tables and provides separate menus for author and book management.
+
+### `lib/helpers.py`
+Contains all the helper functions that handle user input, data validation, and database operations. Each function corresponds to a specific CLI operation like creating, reading, updating, or deleting records.
+
+### `lib/models/author.py`
+Defines the Author class with full ORM functionality including property validation, CRUD operations, and relationship methods. Includes methods for creating, finding, updating, and deleting authors, as well as retrieving associated books.
+
+### `lib/models/book.py`
+Defines the Book class with full ORM functionality and foreign key relationship to Author. Includes property validation and all standard CRUD operations.
+
+### `lib/debug.py`
+A debugging script that creates sample data and opens an interactive debugger for testing the models and their relationships.
+
+## Requirements Met
+
+✅ **ORM Requirements**:
+- Database created with Python ORM methods
+- 2 model classes (Author, Book)
+- One-to-many relationship (Author → Books)
+- Property methods with validation constraints
+- Full CRUD operations for each model
+
+✅ **CLI Requirements**:
+- Interactive menus with user navigation
+- Loops to keep user in application
+- CRUD operations for each model class
+- Input validation and error handling
+- Clean separation of concerns
+
+✅ **Code Quality**:
+- Follows OOP best practices
+- Organized file structure
+- Appropriate imports
+- Comprehensive README documentation
